@@ -1,9 +1,23 @@
-plugins {
-    id 'eclipse'
-    id 'idea'
-    id 'maven-publish'
-    id 'net.neoforged.gradle' version '[6.0.18,6.2)'
+buildscript {
+    repositories {
+        maven { url = 'https://maven.neoforged.net/releases' }
+        maven {
+            url "https://repo.spongepowered.org/repository/maven-public/"
+            // content { includeGroup "org.spongepowered" }
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.neoforged', name: 'NeoGradle', version: '6.+', changing: true
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+    }
 }
+
+apply plugin: "net.neoforged.gradle"
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: "org.spongepowered.mixin"
 
 version = mod_version
 group = mod_group_id
@@ -35,7 +49,7 @@ minecraft {
     // When true, this property will have all Eclipse/IntelliJ IDEA run configurations run the "prepareX" task for the given run configuration before launching the game.
     // In most cases, it is not necessary to enable.
     // enableEclipsePrepareRuns = true
-    // enableIdeaPrepareRuns = true
+    enableIdeaPrepareRuns = true
 
     // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
     // It is REQUIRED to be set to true for this template to function.
@@ -74,7 +88,7 @@ minecraft {
             // You can set various levels here.
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
-
+            property "mixin.env.remapRefMap", "true"
             mods {
                 "${mod_id}" {
                     source sourceSets.main
@@ -121,6 +135,7 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven { url "https://www.cursemaven.com" }
 }
 
 dependencies {
@@ -130,13 +145,15 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.neoforged:forge:${minecraft_version}-${neo_version}"
-
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
-
+    implementation fg.deobf("curse.maven:enchantwithmob-391187:${project.enchantwithmob_id}")
+    implementation fg.deobf("curse.maven:bagus-lib-866533:${project.bagus_lib_id}")
+    implementation fg.deobf("curse.maven:cidatel-331936:${project.cidatel_id}")
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // The group id is ignored when searching -- in this case, it is "blank"
@@ -158,6 +175,9 @@ tasks.named('processResources', ProcessResources).configure {
             loader_version_range: loader_version_range,
             mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors         : mod_authors, mod_description: mod_description, pack_format_number: pack_format_number,
+            cidatel_id          : cidatel_id, cidatel_version: cidatel_version,
+            enchantwithmob_id   : enchantwithmob_id, enchantwithmob_version: enchantwithmob_version,
+            bagus_lib_id        : bagus_lib_id, bagus_lib_version: bagus_lib_version,
     ]
     inputs.properties replaceProperties
 
