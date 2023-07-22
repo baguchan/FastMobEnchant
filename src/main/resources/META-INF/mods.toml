@@ -63,10 +63,10 @@ versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.${ mod_id }]]
-modId = "cidatel"
+modId = "citadel"
 mandatory = true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-versionRange = "${cidatel_version}"
+versionRange = "${citadel_version}"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.${ mod_id }]]
